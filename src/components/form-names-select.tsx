@@ -8,30 +8,22 @@ const FormNamesSelect = () => {
     const {selectForm} = useSelectForm()
 
     const formattedData = useMemo(() => {
-        if (isLoading || forms == null) return [
-            {
-                value: selectedForm?.selectedId,
-                label: selectedForm?.selectedName
-            }
-        ];
-        return forms.map(({_id, formName}: {_id: string, formName: string}) => ({
-            value: _id,
+        if (isLoading || forms == null) return [ selectedForm ];
+        return forms.map((formName: string) => ({
+            value: formName,
             label: formName
         }))
     }, [selectedForm, forms, isLoading])
 
-    const onChange = (newId: string) => {
-        const match = forms.find(({_id}: {_id: string}) => _id === newId);
+    const onChange = (newName: string) => {
+        const match = forms.find((name: string) => name === newName);
         if (match == null) {
             throw new Error('Form doesnt exist')
         }
-        selectForm({
-            selectedName: match.formName,
-            selectedId: newId
-        })
+        selectForm(match)
     }
 
-    return <Select onChange={onChange} value={selectedForm?.selectedId} disabled={isLoading} data={formattedData}/>
+    return <Select onChange={onChange} value={selectedForm} disabled={isLoading} data={formattedData}/>
 }
 
 export default FormNamesSelect

@@ -1,12 +1,28 @@
-import axios from "axios";
-import {useQuery} from "@tanstack/react-query";
+import {useEffect, useState} from "react";
+import {getConfigs} from "@utils/fs-utils";
 
 const useFormNames = () => {
-    const fetchForms = () => {
-        return axios.get('/api/forms')
+    const [formNames, setFormNames] = useState<string[]>([]);
+    const [isLoading, setIsLoading] = useState(false)
+
+    const refresh = () => {
+        if (isLoading) return;
+        setIsLoading(true)
+        getConfigs().then((data: string[]) => {
+            setFormNames(data)
+            setIsLoading(false)
+        })
     }
 
-    return useQuery({queryKey: ['formNames'], queryFn: fetchForms})
+    useEffect(() =>{
+        refresh()
+    }, [])
+
+    return {
+        formNames,
+        refresh,
+        isLoading
+    }
 }
 
 export default useFormNames

@@ -1,6 +1,7 @@
 import React, {createContext, useContext, useEffect, useState} from "react";
 import {getValue, setValue} from "@utils/local-storage";
 import useFormNames from "@hooks/use-form-names";
+import {getAppConfig, saveAppConfig} from "@utils/fs-utils";
 
 interface ISelectedForm {
     selectedId: string;
@@ -8,7 +9,7 @@ interface ISelectedForm {
 }
 
 interface ISelectForm {
-    selectForm: (newValue: ISelectedForm) => void
+    selectForm: (newValue: string, forceRefresh?: boolean) => void
 }
 
 type Form = {
@@ -17,18 +18,14 @@ type Form = {
 }
 
 interface IForms {
-    forms: Form[],
+    forms: string[],
     isLoading: boolean
 }
 
-const SelectedFormContext = createContext<ISelectedForm>({
-    selectedName: '',
-    selectedId: ''
-})
+const SelectedFormContext = createContext<string>('')
 
 const SelectFormContext = createContext<ISelectForm>({
-    selectForm: (newValue) => {
-    }
+    selectForm: (newValue) => {}
 })
 
 const FormsContext = createContext<IForms>({
@@ -41,27 +38,32 @@ type Props = {
 }
 
 const SelectedFormProvider = ({children}: Props) => {
-    const {data, isLoading, refetch} = useFormNames()
-    const [selectedValue, setSelectedValue] = useState<ISelectedForm>(getValue('SELECTED_FORM', {
-        selectedId: '',
-        selectedName: ''
-    }))
+    const {formNames, isLoading, refresh} = useFormNames()
+    const [selectedForm, setSelectedForm] = useState<string>('');
 
-    const selectForm = async (newValue: ISelectedForm, reload = false) => {
+    useEffect(() => {
+        getAppConfig().then(config => {
+            setSelectedForm(config.selectedForm || '')
+        })
+    }, [])
+
+    const selectForm = async (newValue: string, reload = false) => {
         if (reload) {
-            await refetch()
+            await refresh()
         }
-        setValue('SELECTED_FORM', newValue);
-        setSelectedValue(newValue);
+        setSelectedForm(newValue);
+        const appConfig = await getAppConfig();
+        appConfig.selectedForm = newValue;
+        await saveAppConfig(appConfig)
     }
 
     return (
         <FormsContext.Provider value={{
-            forms: data?.data,
+            forms: formNames,
             isLoading
         }}>
             <SelectFormContext.Provider value={{selectForm}}>
-                <SelectedFormContext.Provider value={selectedValue}>
+                <SelectedFormContext.Provider value={selectedForm}>
                     {children}
                 </SelectedFormContext.Provider>
             </SelectFormContext.Provider>

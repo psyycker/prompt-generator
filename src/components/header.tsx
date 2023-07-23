@@ -55,10 +55,6 @@ const useStyles = createStyles((theme) => ({
         },
     },
 
-    button: {
-        backgroundColor: "#FCD757"
-    },
-
     linkLabel: {
         marginRight: rem(5),
     },
