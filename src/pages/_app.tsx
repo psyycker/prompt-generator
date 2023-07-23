@@ -1,16 +1,10 @@
 import '@styles/globals.css'
 import type {AppProps} from 'next/app'
 import {MantineProvider} from '@mantine/core';
-import {
-    Hydrate,
-    QueryClient,
-    QueryClientProvider,
-} from '@tanstack/react-query'
 import React from "react";
 import SelectedFormProvider from "@contexts/selected-form-context";
 
 export default function App({Component, pageProps}: AppProps) {
-    const [queryClient] = React.useState(() => new QueryClient())
 
     return (
         <MantineProvider
@@ -26,13 +20,9 @@ export default function App({Component, pageProps}: AppProps) {
                 }
             }}
         >
-            <QueryClientProvider client={queryClient}>
-                <Hydrate state={pageProps.dehydratedState}>
-                    <SelectedFormProvider>
-                        <Component {...pageProps} />
-                    </SelectedFormProvider>
-                </Hydrate>
-            </QueryClientProvider>
+            <SelectedFormProvider>
+                <Component {...pageProps} />
+            </SelectedFormProvider>
         </MantineProvider>
     )
 }
