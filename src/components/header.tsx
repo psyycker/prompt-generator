@@ -4,9 +4,9 @@ import {
     Container,
     Group,
     Button,
-    Burger,
     rem,
 } from '@mantine/core';
+import NextLink from 'next/link'
 import {useDisclosure} from '@mantine/hooks';
 import CreateFormModal from "@modal/create-form-modal";
 import FormNamesSelect from "@components/form-names-select";
@@ -64,7 +64,7 @@ type Link = { link: string; label: string; }
 
 
 const links: Link[] = [
-    {link: "/form", label: "Forms"},
+    {link: "/", label: "Forms"},
     {link: "/form/edit", label: "Edit a form"},
     {link: "/history", label: "History"}
 ]
@@ -74,20 +74,11 @@ const Header = () => {
     const {classes} = useStyles();
     const items = links.map((link) => {
         return (
-            <a
-                key={link.label}
-                href={link.link}
-                className={classes.link}
-                onClick={(event) => event.preventDefault()}
-            >
+            <NextLink key={link.label} href={link.link}>
                 {link.label}
-            </a>
+            </NextLink>
         )
     });
-
-    const onCreateClick = () => {
-
-    }
 
     return (
         <MantineHeader className={classes.header} height={HEADER_HEIGHT} sx={{borderBottom: 0}} mb={120}>

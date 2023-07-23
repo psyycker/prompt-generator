@@ -5,7 +5,7 @@ import {useRouter} from "next/router";
 import {configExists, createNewConfig} from "@utils/fs-utils";
 import {useInputState} from "@mantine/hooks";
 
-const useCreateForm = () => {
+const useCreateForm = (onCreate: () => void) => {
     const { selectForm } = useSelectForm()
     const router = useRouter()
     const [formName, setFormName] = useInputState('')
@@ -39,6 +39,7 @@ const useCreateForm = () => {
         selectForm(debouncedFormName, true)
         router.push('/form/edit')
         setFormName('')
+        onCreate()
     }
 
     return {

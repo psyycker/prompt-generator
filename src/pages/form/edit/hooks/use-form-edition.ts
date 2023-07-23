@@ -1,16 +1,11 @@
-import {useEffect, useState} from "react";
-import {IForm} from "@typedefs/form";
+import {useSelectedForm} from "@contexts/selected-form-context";
+import useForm from "@hooks/use-form";
 
 export type TYPE = 'Category' | 'Checkbox' | string
 
-const useFormEdition = (form: IForm, isLoading: boolean) => {
-    const [localForm, setLocalForm] = useState<IForm>()
-
-    useEffect(() => {
-        if (!isLoading) {
-            setLocalForm(form)
-        }
-    }, [isLoading, form])
+const useFormEdition = () => {
+    const selectedForm = useSelectedForm();
+    const {form, isLoading} = useForm(selectedForm)
 
     const createItem = (type: TYPE) => {
 
@@ -18,7 +13,8 @@ const useFormEdition = (form: IForm, isLoading: boolean) => {
 
     return {
         createItem,
-        localForm
+        form,
+        isLoading
     }
 }
 

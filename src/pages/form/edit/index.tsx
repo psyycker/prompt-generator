@@ -1,15 +1,13 @@
 import Layout from "@layout";
-import useForm from "@hooks/use-form";
-import {useSelectedForm} from "@contexts/selected-form-context";
 import useFormEdition from "./hooks/use-form-edition";
-import MenuButton from "@components/menu-button";
 import {Button} from "@mantine/core";
 
 const EditFormPage = () => {
-    const selectedForm = useSelectedForm();
-    const {form, isLoading} = useForm(selectedForm?.selectedId)
+    const {createItem, form} = useFormEdition()
 
-    const {createItem, localForm} = useFormEdition(form, isLoading)
+    if (form == null) {
+        return <Layout>Nothing to see here. Start by creating a new form!</Layout>
+    }
 
     return (
         <Layout>

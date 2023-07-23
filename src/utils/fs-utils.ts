@@ -3,10 +3,17 @@ import type {fs as FsType} from "@tauri-apps/api";
 import IAppConfig from "@typedefs/app-config";
 import {IForm} from "@typedefs/form";
 
-const BASE_URL = (documentDir: string): string => `${documentDir}promptgen`
-
 export const saveConfig = (name: string, config: IForm): void => {
 
+}
+
+export const getConfig = (name: string): Promise<IForm> => {
+    return frontendOnly<Promise<IForm>>(async () => {
+        const path = await getConfigPath(name);
+        const fs = await getFs();
+        const configStr = await fs.readTextFile(path);
+        return JSON.parse(configStr)
+    })
 }
 
 const getBaseUrl = async () => {
@@ -91,7 +98,12 @@ export const createNewConfig = (name: string) => {
     return frontendOnly(async () => {
         const fs = await getFs();
         const newPath = await getConfigPath(name);
-        await fs.writeTextFile(newPath, '{}')
+        const emptyContent: IForm = {
+            content: {
+                categories: []
+            }
+        }
+        await fs.writeTextFile(newPath, JSON.stringify(emptyContent, undefined, 2))
     })
 }
 

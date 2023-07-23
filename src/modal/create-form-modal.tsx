@@ -1,10 +1,5 @@
 import {createStyles, Modal, TextInput, Button, Text} from "@mantine/core";
 import useCreateForm from "@hooks/use-create-form";
-import {useInputState} from "@mantine/hooks";
-import {useDeferredValue, useEffect} from "react";
-import {AxiosError} from "axios";
-import {useRouter} from "next/router";
-import {useSelectForm} from "@contexts/selected-form-context";
 
 type Props = {
     opened: boolean,
@@ -22,7 +17,9 @@ const useStyles = createStyles({
 
 const CreateFormModal = ({opened, close}: Props) => {
     const {classes} = useStyles()
-    const {formName, setFormName, submit, exists, isLoading} = useCreateForm()
+    const {formName, setFormName, submit, exists, isLoading} = useCreateForm(() => {
+        close()
+    })
 
     return (
         <Modal size="auto" centered opened={opened} onClose={close} title="Create a new form" xOffset={0}>
